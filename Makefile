@@ -558,3 +558,12 @@ start-test-k8s:
 .PHONY: list
 list:
 	@LC_ALL=C $(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
+
+# notice: go 1.19,node 12.18.4, use: make build_argocd_haodf
+.PHONY: build_argocd_haodf
+build_argocd_haodf: build_ui_local
+	make BIN_NAME=argocd-linux-amd64 GOOS=linux argocd-all
+	DOCKER_BUILDKIT=1	docker build -t $(IMAGE_PREFIX)argocd:$(IMAGE_TAG) --target=argocd-haodf .
+
+build_ui_local:
+	cd ui && yarn install --network-timeout 200000 && HOST_ARCH='amd64' NODE_ENV='production' NODE_ONLINE_ENV='online' NODE_OPTIONS=--max_old_space_size=8192 yarn build
