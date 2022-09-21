@@ -569,3 +569,19 @@ applicationset-controller:
 .PHONY: checksums
 checksums:
 	for f in ./dist/$(BIN_NAME)-*; do openssl dgst -sha256 "$$f" | awk ' { print $$2 }' > "$$f".sha256 ; done
+
+# notice: go 1.19,node 12.18.4, use: make build_argocd_haodf
+.PHONY: build_argocd_haodf
+build_argocd_haodf: build_ui_local build_argocd build_img
+
+.PHONY: build_ui_local
+build_ui_local:
+	cd ui && yarn install --network-timeout 200000 && yarn cache clean && HOST_ARCH=$TARGETARCH NODE_ENV='production' NODE_ONLINE_ENV='online' NODE_OPTIONS=--max_old_space_size=8192 yarn build
+
+.PHONY: build_argocd
+build_argocd:
+	make BIN_NAME=argocd-linux-amd64 GOOS=linux argocd-all
+
+.PHONY: build_img
+build_img:
+	DOCKER_BUILDKIT=1 docker build -t $(IMAGE_PREFIX)argocd:$(IMAGE_TAG) --target=argocd-haodf .

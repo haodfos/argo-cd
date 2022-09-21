@@ -129,3 +129,9 @@ RUN ln -s /usr/local/bin/argocd /usr/local/bin/argocd-server && \
     ln -s /usr/local/bin/argocd /usr/local/bin/argocd-k8s-auth
 
 USER 999
+
+####################################################################################################
+# argocd-haodf image
+####################################################################################################
+FROM harbor.haodf.net/argoproj/argocd:v2.4.11 as argocd-haodf
+COPY dist/argocd-linux-amd64 /usr/local/bin/argocd

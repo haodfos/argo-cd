@@ -4,7 +4,7 @@
 .idea/
 .DS_Store
 vendor/
-dist/
+# dist/
 *.iml
 # delve debug binaries
 cmd/**/debug
